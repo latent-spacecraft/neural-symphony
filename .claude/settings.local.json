@@ -1,0 +1,18 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(mkdir:*)",
+      "Bash(chmod:*)",
+      "Bash(./setup.sh:*)",
+      "Bash(npm install:*)",
+      "Bash(cat:*)",
+      "Bash(npm ls:*)",
+      "Bash(rm:*)",
+      "Bash(npm cache clean:*)",
+      "Bash(find:*)",
+      "Bash(powershell:*)",
+      "WebFetch(domain:cookbook.openai.com)"
+    ],
+    "deny": []
+  }
+}

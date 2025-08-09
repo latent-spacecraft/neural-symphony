@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#0A0A0A" />
+    <meta
+      name="description"
+      content="Neural Symphony - AI Reasoning Orchestrator. Conduct GPT-oss-20b thinking like a maestro."
+    />
+    <link rel="apple-touch-icon" href="%PUBLIC_URL%/logo192.png" />
+    <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
+    
+    <!-- Cyberpunk Font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <title>Neural Symphony - AI Reasoning Orchestrator</title>
+    
+    <style>
+      body {
+        background: #0A0A0A;
+        color: #FFFFFF;
+        font-family: 'Rajdhani', sans-serif;
+        overflow: hidden;
+      }
+      
+      #loading {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background: #0A0A0A;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        z-index: 9999;
+      }
+      
+      #loading h1 {
+        font-family: 'Orbitron', monospace;
+        font-size: 3rem;
+        font-weight: 900;
+        background: linear-gradient(45deg, #00D4FF, #39FF14, #FF1493);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        margin-bottom: 2rem;
+        text-align: center;
+      }
+      
+      .loading-bar {
+        width: 300px;
+        height: 4px;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 2px;
+        overflow: hidden;
+      }
+      
+      .loading-progress {
+        height: 100%;
+        background: linear-gradient(90deg, #00D4FF, #39FF14);
+        width: 0%;
+        animation: loading 2s ease-in-out infinite;
+        border-radius: 2px;
+      }
+      
+      @keyframes loading {
+        0% { width: 0%; }
+        50% { width: 70%; }
+        100% { width: 100%; }
+      }
+      
+      .neural-bg {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        opacity: 0.1;
+        background-image: 
+          radial-gradient(circle at 20% 50%, #00D4FF22 0%, transparent 50%),
+          radial-gradient(circle at 80% 50%, #39FF1422 0%, transparent 50%),
+          radial-gradient(circle at 40% 80%, #FF149322 0%, transparent 50%);
+      }
+    </style>
+  </head>
+  <body>
+    <noscript>You need to enable JavaScript to run this app.</noscript>
+    
+    <div id="loading">
+      <div class="neural-bg"></div>
+      <h1>🎼 NEURAL SYMPHONY</h1>
+      <p style="margin-bottom: 2rem; font-size: 1.2rem; color: #00D4FF;">Initializing AI Reasoning Orchestrator...</p>
+      <div class="loading-bar">
+        <div class="loading-progress"></div>
+      </div>
+    </div>
+    
+    <div id="root"></div>
+  </body>
+</html>

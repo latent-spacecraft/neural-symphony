@@ -1,0 +1,277 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Neural Symphony Global Styles */
+@layer base {
+  * {
+    box-sizing: border-box;
+  }
+
+  html, body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Rajdhani', sans-serif;
+    background: #0A0A0A;
+    color: #FFFFFF;
+    overflow-x: hidden;
+  }
+
+  #root {
+    min-height: 100vh;
+    width: 100vw;
+  }
+
+  /* Custom scrollbar */
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.05);
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: linear-gradient(45deg, #00D4FF, #39FF14);
+    border-radius: 4px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(45deg, #00D4FF, #FF1493);
+  }
+}
+
+@layer components {
+  /* Button Components */
+  .btn-cyber {
+    @apply px-6 py-3 bg-transparent border border-cyber-blue text-cyber-blue font-neural font-semibold rounded-cyber;
+    @apply hover:bg-cyber-blue hover:text-cyber-black transition-all duration-300;
+    @apply hover:shadow-cyber-intense hover:glow-pulse;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+
+  .btn-cyber-primary {
+    @apply btn-cyber bg-cyber-blue text-cyber-black;
+    @apply hover:bg-transparent hover:text-cyber-blue;
+  }
+
+  .btn-cyber-danger {
+    @apply btn-cyber border-cyber-pink text-cyber-pink;
+    @apply hover:bg-cyber-pink hover:text-cyber-black;
+  }
+
+  .btn-cyber-success {
+    @apply btn-cyber border-cyber-green text-cyber-green;
+    @apply hover:bg-cyber-green hover:text-cyber-black;
+  }
+
+  /* Input Components */
+  .input-cyber {
+    @apply w-full px-4 py-3 bg-cyber-dark border border-cyber-blue/30 text-cyber-white;
+    @apply rounded-cyber focus:border-cyber-blue focus:outline-none focus:shadow-cyber;
+    @apply placeholder-gray-400 font-neural;
+    transition: all 0.3s ease;
+  }
+
+  .input-cyber:focus {
+    box-shadow: 0 0 0 2px rgba(0, 212, 255, 0.2);
+  }
+
+  /* Panel Components */
+  .panel-cyber {
+    @apply bg-cyber-dark/80 backdrop-blur-cyber border border-cyber-blue/20;
+    @apply rounded-neural shadow-neural;
+  }
+
+  .panel-cyber-glass {
+    @apply neural-glass rounded-neural;
+  }
+
+  /* Expert Activity Colors */
+  .expert-math {
+    @apply text-cyber-blue;
+    --expert-color: #00D4FF;
+  }
+
+  .expert-creative {
+    @apply text-cyber-green;
+    --expert-color: #39FF14;
+  }
+
+  .expert-logic {
+    @apply text-cyber-pink;
+    --expert-color: #FF1493;
+  }
+
+  .expert-analysis {
+    @apply text-cyber-purple;
+    --expert-color: #9D4EDD;
+  }
+
+  /* Custom rc-slider styles */
+  .rc-slider-track {
+    background-color: #00D4FF !important;
+  }
+  
+  .rc-slider-handle {
+    border-color: #00D4FF !important;
+    background-color: #00D4FF !important;
+    box-shadow: 0 0 10px rgba(0, 212, 255, 0.5) !important;
+  }
+  
+  .rc-slider-handle:focus {
+    outline: none !important;
+    box-shadow: 0 0 15px rgba(0, 212, 255, 0.7) !important;
+  }
+  
+  .rc-slider-rail {
+    background-color: rgba(255, 255, 255, 0.1) !important;
+  }
+
+  /* Neural Network Visualization */
+  .neural-node {
+    @apply rounded-full border-2 border-current;
+    transition: all 0.3s ease;
+  }
+
+  .neural-node.active {
+    @apply animate-expert-pulse;
+    filter: drop-shadow(0 0 15px currentColor);
+  }
+
+  .neural-connection {
+    stroke-width: 2;
+    stroke-dasharray: 5,5;
+    animation: data-stream 2s linear infinite;
+  }
+
+  /* Reasoning Flow */
+  .reasoning-step {
+    @apply bg-cyber-dark/50 border-l-4 border-cyber-blue pl-4 py-2 mb-2;
+    @apply rounded-r-cyber transition-all duration-500;
+  }
+
+  .reasoning-step.active {
+    @apply border-cyber-green bg-cyber-green/10;
+    animation: reasoning-wave 2s ease-in-out infinite;
+  }
+
+  .reasoning-step.completed {
+    @apply border-cyber-blue/50 bg-cyber-blue/5;
+  }
+
+  /* Expert Heatmap */
+  .expert-cell {
+    @apply w-4 h-4 rounded border border-gray-600;
+    transition: all 0.3s ease;
+  }
+
+  .expert-cell.intensity-0 { @apply bg-gray-800; }
+  .expert-cell.intensity-1 { @apply bg-cyber-blue/20; }
+  .expert-cell.intensity-2 { @apply bg-cyber-blue/40; }
+  .expert-cell.intensity-3 { @apply bg-cyber-blue/60; }
+  .expert-cell.intensity-4 { @apply bg-cyber-blue/80; }
+  .expert-cell.intensity-5 { @apply bg-cyber-blue; }
+
+  /* Loading and Status */
+  .loading-dots::after {
+    content: '';
+    animation: loading-dots 1.5s steps(4, end) infinite;
+  }
+
+  @keyframes loading-dots {
+    0%, 20% { content: ''; }
+    40% { content: '.'; }
+    60% { content: '..'; }
+    80%, 100% { content: '...'; }
+  }
+
+  /* Glitch Effect */
+  .glitch {
+    animation: glitch 0.3s ease-in-out infinite alternate;
+  }
+
+  @keyframes glitch {
+    0% {
+      text-shadow: 0.05em 0 0 #00D4FF, -0.05em -0.025em 0 #FF1493,
+                   0.025em 0.05em 0 #39FF14;
+    }
+    15% {
+      text-shadow: 0.05em 0 0 #00D4FF, -0.05em -0.025em 0 #FF1493,
+                   0.025em 0.05em 0 #39FF14;
+    }
+    16% {
+      text-shadow: -0.05em -0.025em 0 #00D4FF, 0.025em 0.025em 0 #FF1493,
+                   -0.05em -0.05em 0 #39FF14;
+    }
+    49% {
+      text-shadow: -0.05em -0.025em 0 #00D4FF, 0.025em 0.025em 0 #FF1493,
+                   -0.05em -0.05em 0 #39FF14;
+    }
+    50% {
+      text-shadow: 0.025em 0.05em 0 #00D4FF, 0.05em 0 0 #FF1493,
+                   0 -0.05em 0 #39FF14;
+    }
+    99% {
+      text-shadow: 0.025em 0.05em 0 #00D4FF, 0.05em 0 0 #FF1493,
+                   0 -0.05em 0 #39FF14;
+    }
+    100% {
+      text-shadow: -0.025em 0 0 #00D4FF, -0.025em -0.025em 0 #FF1493,
+                   -0.025em -0.05em 0 #39FF14;
+    }
+  }
+}
+
+@layer utilities {
+  /* Text utilities */
+  .text-shadow-glow {
+    text-shadow: 0 0 10px currentColor;
+  }
+
+  .text-shadow-intense {
+    text-shadow: 0 0 10px currentColor, 0 0 20px currentColor;
+  }
+
+  /* Animation utilities */
+  .animate-pulse-cyber {
+    animation: pulse-cyber 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  }
+
+  .animate-glow {
+    animation: glow-pulse 2s ease-in-out infinite alternate;
+  }
+
+  /* Layout utilities */
+  .grid-neural {
+    display: grid;
+    gap: 1rem;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  }
+
+  .flex-cyber {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* Background utilities */
+  .bg-neural-gradient {
+    background: linear-gradient(135deg, 
+      rgba(0, 212, 255, 0.1) 0%, 
+      rgba(57, 255, 20, 0.1) 50%, 
+      rgba(255, 20, 147, 0.1) 100%);
+  }
+
+  .bg-expert-gradient {
+    background: linear-gradient(45deg,
+      rgba(0, 212, 255, 0.2),
+      rgba(57, 255, 20, 0.2),
+      rgba(255, 20, 147, 0.2),
+      rgba(157, 78, 221, 0.2));
+    background-size: 300% 300%;
+    animation: neural-flow 6s ease infinite;
+  }
+}

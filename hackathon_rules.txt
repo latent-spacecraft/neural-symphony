@@ -1,0 +1,154 @@
+OpenAI Open Model Hackathon
+Build with gpt-oss, OpenAI’s open weight reasoning models.
+
+35 days to deadline (as of Aug 7 2025)
+
+Deadline
+
+Sep 11, 2025 @ 8:00pm EDT 
+Online
+Public
+$30,000 in cash	1561 participants
+OpenAI
+Devpost icon rgb30px
+Managed by Devpost
+IoT Machine Learning/AI Robotic Process Automation
+gpt-oss-120b and gpt-oss-20b are here. Developed with feedback from the open-source community, these models push the frontier of open models at their size. 
+
+Hugging Face, NVIDIA, Ollama, vLLM, and OpenAI have come together to host this six week hackathon. Your challenge is to apply these models in creative, unexpected ways: build a robot with reasoning, craft a local agent that thrives offline, fine-tune a model into something indispensable, or push the edge with the weirdest hardware you can imagine. Maybe your project will benefit humanity, or maybe it’ll be so unexpected it surprises everyone in the room. However you build, this is your moment to redefine what open models can do.
+
+ 
+
+Get Started
+
+Both gpt-oss models are free to download on Hugging Face.
+
+Learn more about the models: openai.com/open-models
+
+Github: github.com/openai/gpt-oss 
+
+Check out this microsite of gpt-oss in action: gpt-oss.com
+
+Requirements
+What to Build
+Apply the gpt-oss models in the most interesting way. Surprise us with something we haven’t seen before! Orient your application into the following categories—we’ll pick one winner for each:
+
+Best Overall — The absolutely most interesting application of gpt-oss.
+
+Best In Robotics — The most effective use of gpt-oss models in an IRL robot. (Record a video of it in action!)
+
+Weirdest Hardware — The most creative and interesting hardware product that uses gpt-oss models.
+
+Best Local Agent — The most useful agentic application of gpt-oss with no internet access.
+
+Most Useful Fine-Tune — The most effective use of gpt-oss for specialized domains, through fine-tuning.
+
+Wildcard — The most unexpected use of gpt-oss that OpenAI didn’t think of.
+
+For Humanity — The best application of gpt-oss that benefits all of humanity.
+
+ 
+What to Submit
+Choose the category or categories that best aligns with your project and provide a brief explanation for your choice.
+
+Text description that explains the features and functionality of your Project.
+
+<3-minute Demonstration video of your Project
+
+Provide a URL to your public code repository for judging and testing, with clear indication of gpt-oss model use (e.g., README with testing instructions, sample data, or a link to model weights / training data if you fine-tuned). An OSS/Apache License is encouraged, but not required.
+
+Prizes
+$30,000+ in prizes+ other prizes
+Best Overall | Sponsored by Hugging Face
+$10,000 in cash
+1 winner
+Best in Robotics | Sponsored by NVIDIA
+1 winner
+NVIDIA RTX6000 PRO GPU
+
+Weirdest Hardware | Sponsored by Ollama & NVIDIA
+$5,000 in cash
+1 winner
+$5,000 USD sponsored by Ollama
+RTX5090 GPU sponsored by NVIDIA
+
+Best Local Agent | Sponsored by NVIDIA
+1 winner
+NVIDIA RTX5090 GPU
+
+Most Useful Fine-Tune | Sponsored by OpenAI
+$5,000 in cash
+1 winner
+Wildcard—best unexpected use | Sponsored by vLLM
+$5,000 in cash
+1 winner
+For Humanity | Sponsored by OpenAI
+$5,000 in cash
+1 winner
+Judges
+Dmitry Pimenov
+Dmitry Pimenov
+OpenAI
+
+Casey Dvorak
+Casey Dvorak
+OpenAI
+
+Dominik Kundel
+Dominik Kundel
+OpenAI
+
+Vaibhav Srivastav
+Vaibhav Srivastav
+Hugging Face
+
+Parth Sareen
+Parth Sareen
+Ollama
+
+Mitesh Patel
+Mitesh Patel
+NVIDIA
+
+Tanay Varshney
+Tanay Varshney
+NVIDIA
+
+Jay Rodge
+Jay Rodge
+NVIDIA
+
+Annie Surla
+Annie Surla
+NVIDIA
+
+Ekaterina Sirazitdinova
+Ekaterina Sirazitdinova
+NVIDIA
+
+Chris Alexiuk
+Chris Alexiuk
+NVIDIA
+
+Anusha Pant
+Anusha Pant
+NVIDIA
+
+Simon Mo
+Simon Mo
+vLLM
+
+Roger Wang
+Roger Wang
+vLLM
+
+Judging Criteria
+Application of gpt-oss
+Does the project apply the open models in an effective way, fitting with the categories? Can other models do the same thing, or does the project showcase the strengths of the models uniquely?
+Design
+Is the user experience and design of the project well thought-out, including safety of the user? Is there a balanced blend of frontend and backend?
+Potential Impact
+How big of an impact could the project have for its intended audience? How big of an impact could it have beyond the target community and the rest of the world?
+Novelty of the Idea
+How creative and unique is the project? Does the concept exist already? If so, how much does the project improve on it?
+Questions? Email the hackathon manager

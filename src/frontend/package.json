@@ -1,0 +1,52 @@
+{
+  "name": "neural-symphony-frontend",
+  "version": "1.0.0",
+  "description": "Frontend for Neural Symphony AI Reasoning Orchestrator",
+  "private": true,
+  "dependencies": {
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-scripts": "5.0.1",
+    "d3": "^7.8.0",
+    "three": "^0.150.0",
+    "@react-three/fiber": "^8.13.0",
+    "@react-three/drei": "^9.77.0",
+    "tailwindcss": "^3.3.0",
+    "autoprefixer": "^10.4.14",
+    "postcss": "^8.4.24",
+    "socket.io-client": "^4.7.1",
+    "framer-motion": "^10.12.0",
+    "rc-slider": "^10.6.2",
+    "react-knob-headless": "^0.4.0"
+  },
+  "scripts": {
+    "start": "HOST=0.0.0.0 react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject"
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "devDependencies": {
+    "@types/react": "^18.2.14",
+    "@types/react-dom": "^18.2.6",
+    "@types/d3": "^7.4.0",
+    "@types/three": "^0.150.0"
+  }
+}
