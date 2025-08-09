@@ -2,7 +2,7 @@
 # Multi-stage Docker build for GPU-accelerated deployment
 
 # Stage 1: Python AI Backend
-FROM nvidia/cuda:12.4-devel-ubuntu22.04 as ai-backend
+FROM nvidia/cuda:12.4.1-devel-ubuntu22.04 as ai-backend
 
 # Set environment variables
 ENV DEBIAN_FRONTEND=noninteractive
@@ -87,7 +87,7 @@ COPY src/frontend/ ./
 RUN npm run build
 
 # Stage 4: Production Image
-FROM nvidia/cuda:12.4-runtime-ubuntu22.04
+FROM nvidia/cuda:12.4.1-runtime-ubuntu22.04
 
 # Install Node.js and Python runtime
 RUN apt-get update && apt-get install -y \
