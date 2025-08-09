@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Neural Symphony</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        body { 
+            font-family: Arial, sans-serif; 
+            margin: 0; 
+            padding: 20px; 
+            background: #0a0a0a; 
+            color: white; 
+        }
+        .container { 
+            max-width: 1200px; 
+            margin: 0 auto; 
+        }
+        .header { 
+            text-align: center; 
+            margin-bottom: 40px; 
+        }
+        .api-test { 
+            background: #1a1a1a; 
+            padding: 20px; 
+            border-radius: 8px; 
+            margin: 20px 0; 
+        }
+        button { 
+            background: #00d4ff; 
+            color: black; 
+            border: none; 
+            padding: 10px 20px; 
+            border-radius: 4px; 
+            cursor: pointer; 
+            margin-right: 10px;
+        }
+        button:hover { 
+            background: #39ff14; 
+        }
+        #output { 
+            background: #2a2a2a; 
+            padding: 15px; 
+            border-radius: 4px; 
+            margin-top: 15px; 
+            min-height: 100px; 
+            font-family: monospace;
+            white-space: pre-wrap;
+        }
+        .status { 
+            padding: 10px; 
+            border-radius: 4px; 
+            margin: 10px 0; 
+        }
+        .status.success { 
+            background: #1a4a1a; 
+            border-left: 4px solid #39ff14; 
+        }
+        .status.error { 
+            background: #4a1a1a; 
+            border-left: 4px solid #ff1493; 
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎼 Neural Symphony</h1>
+            <p>AI Reasoning Orchestrator</p>
+            <div id="connection-status" class="status">Connecting...</div>
+        </div>
+        
+        <div class="api-test">
+            <h3>System Health Check</h3>
+            <button onclick="checkHealth()">Check Health</button>
+            <button onclick="checkGPU()">Check GPU</button>
+            <button onclick="checkModel()">Check Model</button>
+        </div>
+        
+        <div class="api-test">
+            <h3>AI Reasoning Test</h3>
+            <button onclick="testBasicReasoning()">Basic Test</button>
+            <button onclick="testHarmonyFormat()">Harmony Format</button>
+            <button onclick="testStream()">Stream Test</button>
+        </div>
+        
+        <div class="api-test">
+            <h3>Output</h3>
+            <div id="output">Ready to test Neural Symphony...</div>
+        </div>
+    </div>
+    
+    <script>
+        function updateStatus(message, type = 'success') {
+            const status = document.getElementById('connection-status');
+            status.textContent = message;
+            status.className = `status ${type}`;
+        }
+        
+        function log(message) {
+            const output = document.getElementById('output');
+            const timestamp = new Date().toLocaleTimeString();
+            output.innerHTML += `[${timestamp}] ${message}\n`;
+            output.scrollTop = output.scrollHeight;
+        }
+        
+        async function checkHealth() {
+            log('Checking system health...');
+            try {
+                const response = await fetch('/api/health');
+                const data = await response.json();
+                log(`Health check result: ${JSON.stringify(data, null, 2)}`);
+                updateStatus('System healthy', 'success');
+            } catch (error) {
+                log(`Health check failed: ${error.message}`);
+                updateStatus('System unhealthy', 'error');
+            }
+        }
+        
+        async function checkGPU() {
+            log('Checking GPU status...');
+            try {
+                const response = await fetch('/api/gpu-status');
+                const data = await response.json();
+                log(`GPU status: ${JSON.stringify(data, null, 2)}`);
+            } catch (error) {
+                log(`GPU check failed: ${error.message}`);
+            }
+        }
+        
+        async function checkModel() {
+            log('Checking model status...');
+            try {
+                const response = await fetch('/api/model-info');
+                const data = await response.json();
+                log(`Model info: ${JSON.stringify(data, null, 2)}`);
+            } catch (error) {
+                log(`Model check failed: ${error.message}`);
+            }
+        }
+        
+        async function testBasicReasoning() {
+            log('Testing basic AI reasoning...');
+            try {
+                const response = await fetch('/api/generate', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ 
+                        prompt: 'Explain the concept of AI reasoning in one paragraph.',
+                        temperature: 0.7,
+                        max_tokens: 200
+                    })
+                });
+                const data = await response.json();
+                log(`Basic reasoning result: ${JSON.stringify(data, null, 2)}`);
+            } catch (error) {
+                log(`Basic reasoning test failed: ${error.message}`);
+            }
+        }
+        
+        async function testHarmonyFormat() {
+            log('Testing harmony format reasoning...');
+            try {
+                const response = await fetch('/api/generate', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ 
+                        prompt: 'Think through this step by step: What makes Neural Symphony unique?',
+                        temperature: 0.8,
+                        max_tokens: 300,
+                        harmony: true
+                    })
+                });
+                const data = await response.json();
+                log(`Harmony format result: ${JSON.stringify(data, null, 2)}`);
+            } catch (error) {
+                log(`Harmony format test failed: ${error.message}`);
+            }
+        }
+        
+        async function testStream() {
+            log('Testing streaming reasoning...');
+            try {
+                const response = await fetch('/api/stream', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ 
+                        prompt: 'Count from 1 to 10 and explain each number.',
+                        temperature: 0.7
+                    })
+                });
+                
+                if (!response.body) {
+                    throw new Error('Streaming not supported');
+                }
+                
+                const reader = response.body.getReader();
+                log('Streaming response:');
+                
+                while (true) {
+                    const { done, value } = await reader.read();
+                    if (done) break;
+                    
+                    const chunk = new TextDecoder().decode(value);
+                    log(`Stream chunk: ${chunk}`);
+                }
+                
+                log('Streaming completed');
+            } catch (error) {
+                log(`Streaming test failed: ${error.message}`);
+            }
+        }
+        
+        // Initialize on page load
+        window.onload = function() {
+            updateStatus('Ready for testing', 'success');
+            log('Neural Symphony test interface loaded');
+        };
+    </script>
+</body>
+</html>

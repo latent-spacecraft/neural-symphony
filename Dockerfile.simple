@@ -1,10 +1,9 @@
-# Neural Symphony - AI Reasoning Orchestrator
-# Multi-stage Docker build for GPU-accelerated deployment
+# Neural Symphony - Simple Dockerfile (Minimal viable build)
+# Builds without complex frontend to test core functionality
 
 # Stage 1: Python AI Backend
 FROM nvidia/cuda:12.4.1-devel-ubuntu22.04 as ai-backend
 
-# Set environment variables
 ENV DEBIAN_FRONTEND=noninteractive
 ENV CUDA_VISIBLE_DEVICES=0
 ENV PYTHONPATH=/app
@@ -21,7 +20,6 @@ RUN apt-get update && apt-get install -y \
     wget \
     && rm -rf /var/lib/apt/lists/*
 
-# Create app directory
 WORKDIR /app
 
 # Install Python dependencies
@@ -47,9 +45,7 @@ RUN pip3 install \
     uvicorn \
     websockets \
     pydantic \
-    kernels \
-    tensorrt \
-    nvidia-tensorrt
+    kernels
 
 # Copy AI model interface scripts
 COPY scripts/ ./scripts/
@@ -71,29 +67,14 @@ COPY src/api/ ./src/api/
 COPY src/websocket/ ./src/websocket/
 COPY src/utils/ ./src/utils/
 
-# Stage 3: React Frontend Build
-FROM node:18-alpine as frontend-build
+# Stage 3: Simple Frontend (Static files)
+FROM node:18-alpine as frontend-simple
 
 WORKDIR /app
 
-# Copy frontend package files
-COPY src/frontend/package.json ./
-
-# Clear npm cache and install with force resolution
-RUN npm cache clean --force && \
-    npm install --legacy-peer-deps --force --production=false
-
-# Copy frontend source files
-COPY src/frontend/src ./src/
-COPY src/frontend/public ./public/
-COPY src/frontend/tailwind.config.js ./
-COPY src/frontend/postcss.config.js ./
-
-# Set build environment and build
-ENV NODE_ENV=production
-ENV NODE_OPTIONS="--max_old_space_size=4096 --openssl-legacy-provider"
-ENV GENERATE_SOURCEMAP=false
-RUN npm run build
+# Create build directory and copy pre-built HTML file
+RUN mkdir -p build
+COPY docker/simple-frontend/index.html build/
 
 # Stage 4: Production Image
 FROM nvidia/cuda:12.4.1-runtime-ubuntu22.04
@@ -109,7 +90,6 @@ RUN apt-get update && apt-get install -y \
     curl \
     && rm -rf /var/lib/apt/lists/*
 
-# Create app directory
 WORKDIR /app
 
 # Copy Python AI backend from stage 1
@@ -126,8 +106,8 @@ COPY --from=backend /app/src/websocket /app/src/websocket
 COPY --from=backend /app/src/utils /app/src/utils
 COPY --from=backend /app/package*.json /app/
 
-# Copy frontend build from stage 3
-COPY --from=frontend-build /app/build /app/frontend/build
+# Copy simple frontend
+COPY --from=frontend-simple /app/build /app/frontend/build
 
 # Create required directories
 RUN mkdir -p /app/models /app/logs /var/log/supervisor
