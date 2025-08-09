@@ -119,7 +119,8 @@ ehthumbs.db
 Thumbs.db
 
 # AI Models and Large Files
-models/
+models/gpt-oss-20b/
+!models/.gitkeep
 *.bin
 *.safetensors
 *.pt

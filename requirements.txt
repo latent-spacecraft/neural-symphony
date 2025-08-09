@@ -1,0 +1,36 @@
+# Neural Symphony - Python Dependencies
+
+# Core AI/ML
+torch>=2.0.0
+torchvision>=0.15.0
+torchaudio>=2.0.0
+transformers>=4.35.0
+accelerate>=0.24.0
+huggingface_hub>=0.17.0
+
+# GPU Acceleration
+bitsandbytes>=0.41.0
+flash-attn>=2.3.0
+
+# Inference Engines
+vllm>=0.2.0
+tensorrt-llm
+
+# API Framework
+fastapi>=0.104.0
+uvicorn>=0.24.0
+websockets>=12.0
+pydantic>=2.5.0
+
+# Utilities
+numpy>=1.24.0
+scipy>=1.11.0
+pandas>=2.1.0
+matplotlib>=3.7.0
+pillow>=10.0.0
+tqdm>=4.66.0
+requests>=2.31.0
+
+# Optional optimizations
+triton>=2.1.0
+einops>=0.7.0

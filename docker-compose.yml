@@ -1,0 +1,115 @@
+version: '3.8'
+
+services:
+  # Neural Symphony - AI Reasoning Orchestrator
+  neural-symphony:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: neural-symphony-main
+    restart: unless-stopped
+    
+    # GPU access for AI model inference
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+    
+    # Environment variables
+    environment:
+      - NODE_ENV=production
+      - CUDA_VISIBLE_DEVICES=0
+      - HF_HOME=/app/.cache/huggingface
+      - MODEL_PATH=/app/models/gpt-oss-20b
+      - PYTHONPATH=/app
+      - PORT=3001
+      - WS_PORT=3002
+      - AI_BACKEND_PORT=8000
+    
+    # Volume mounts
+    volumes:
+      - ./models:/app/models:ro  # Model weights (read-only)
+      - neural_symphony_cache:/app/.cache  # HuggingFace cache
+      - neural_symphony_logs:/app/logs  # Application logs
+      - /tmp/.X11-unix:/tmp/.X11-unix:rw  # For potential GUI debugging
+    
+    # Port mappings
+    ports:
+      - "80:80"          # Nginx frontend
+      - "3000:3000"      # Node.js API (development)
+      - "3001:3001"      # Node.js API (production)
+      - "3002:3002"      # WebSocket server
+      - "8000:8000"      # Python AI backend
+    
+    # Health check
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3001/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 120s
+    
+    # Logging configuration
+    logging:
+      driver: json-file
+      options:
+        max-size: "100m"
+        max-file: "5"
+    
+    # Security options
+    security_opt:
+      - no-new-privileges:true
+    
+    # Resource limits
+    mem_limit: 24g
+    memswap_limit: 24g
+    shm_size: 4g
+
+  # Redis for session management and caching (optional)
+  redis:
+    image: redis:7-alpine
+    container_name: neural-symphony-redis
+    restart: unless-stopped
+    command: redis-server --appendonly yes
+    volumes:
+      - neural_symphony_redis:/data
+    ports:
+      - "6379:6379"
+    mem_limit: 1g
+
+  # Monitoring with Prometheus (optional)
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: neural-symphony-prometheus
+    restart: unless-stopped
+    volumes:
+      - ./docker/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - neural_symphony_prometheus:/prometheus
+    ports:
+      - "9090:9090"
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/etc/prometheus/console_libraries'
+      - '--web.console.templates=/etc/prometheus/consoles'
+    mem_limit: 512m
+
+# Named volumes for persistence
+volumes:
+  neural_symphony_cache:
+    driver: local
+  neural_symphony_logs:
+    driver: local
+  neural_symphony_redis:
+    driver: local
+  neural_symphony_prometheus:
+    driver: local
+
+# Networks
+networks:
+  default:
+    name: neural-symphony-network
+    driver: bridge

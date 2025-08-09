@@ -47,43 +47,64 @@ Exploits GPT-oss's unique harmony format:
 ## 🚀 Quick Start
 
 ### Prerequisites
+- **Docker**: Docker Engine 20.10+ with Docker Compose
 - **GPU**: 16GB+ VRAM (RTX 4060 Ti confirmed compatible)
+- **NVIDIA Docker**: For GPU acceleration
 - **RAM**: 32GB system memory
-- **OS**: Linux/Windows with CUDA 12.x support
 - **Storage**: 50GB free space for model weights
 
-### Installation
+### Docker Deployment (Recommended)
 
-1. **Clone and setup**:
+1. **Clone the repository**:
 ```bash
 git clone <repository-url>
 cd neural-symphony
-npm install
 ```
 
-2. **Setup model and environment**:
+2. **Start with Docker Compose**:
 ```bash
+docker-compose up --build
+```
+
+3. **Access the application**:
+- **Web Interface**: http://localhost
+- **API**: http://localhost/api  
+- **Health Check**: http://localhost/health
+
+The system will automatically:
+- Download GPT-oss-20b model (~40GB) on first run
+- Set up GPU acceleration with CUDA
+- Start all services (Frontend, API, AI Backend)
+- Configure nginx proxy
+
+### Manual Installation (Alternative)
+
+1. **Setup environment**:
+```bash
+npm install
 node scripts/setup-model.js
 ```
-This will:
-- Create conda environment with Python 3.10
-- Install vLLM, PyTorch, and dependencies  
-- Download GPT-oss-20b model (~40GB)
-- Test model loading
 
-3. **Configure environment**:
+2. **Configure environment**:
 ```bash
 cp .env.example .env
 # Edit .env with your settings
 ```
 
-4. **Start the system**:
+3. **Start services**:
 ```bash
+# Terminal 1: AI Backend
 conda activate neural-symphony
-npm run dev
+python scripts/transformers-server.py
+
+# Terminal 2: Node.js API  
+npm run backend
+
+# Terminal 3: React Frontend
+cd src/frontend && npm start
 ```
 
-5. **Open browser**: `http://localhost:3000`
+4. **Open browser**: `http://localhost:3000`
 
 ---
 
@@ -103,10 +124,17 @@ npm run dev
 - **Speed/Quality**: Trade response time vs depth
 
 ### Demo Scenarios
-Try these built-in demos:
-- **Climate Conductor**: Design carbon-negative cities
-- **Creative Racing**: Invent 2050 entertainment
-- **Logic Debugging**: Solve complex puzzles interactively
+Run interactive demos:
+```bash
+# Access demo runner at http://localhost/demos
+# Or run directly:
+docker exec -it neural-symphony-main node demos/run-demo.js
+
+# Available demos:
+node demos/run-demo.js climate-solution-demo    # Design carbon-negative cities
+node demos/run-demo.js creative-racing-demo     # Invent 2050 entertainment  
+node demos/run-demo.js debugging-demo           # Solve complex puzzles interactively
+```
 
 ---
 
@@ -144,26 +172,37 @@ Try these built-in demos:
 
 ## 🧪 Testing
 
+### Docker Testing
+```bash
+# Check all services
+docker-compose ps
+
+# View logs
+docker-compose logs -f
+
+# Test API endpoints
+curl http://localhost/api/health
+curl http://localhost/health
+```
+
+### Manual Testing
 Run the reasoning test suite:
 ```bash
-# Full test suite
+# Full test suite (requires manual setup)
 node scripts/test-reasoning.js
 
-# Specific tests  
-node scripts/test-reasoning.js basic
-node scripts/test-reasoning.js expert
-node scripts/test-reasoning.js streaming
-node scripts/test-reasoning.js parallel
+# Test model loading
+python scripts/check_tensorrt.py
 ```
 
-Test WebSocket connections:
+### Performance Monitoring
 ```bash
-npm run test:websocket
-```
+# Access metrics at http://localhost:9090 (Prometheus)
+# Check GPU usage
+nvidia-smi
 
-Performance benchmarks:
-```bash
-npm run benchmark
+# Monitor container resources  
+docker stats neural-symphony-main
 ```
 
 ---
@@ -222,35 +261,58 @@ npm run benchmark
 ### Project Structure
 ```
 neural-symphony/
+├── Dockerfile              # Multi-stage container build
+├── docker-compose.yml      # Service orchestration
 ├── src/
-│   ├── backend/         # Node.js API server
-│   ├── frontend/        # React interface
-│   ├── models/          # GPT-oss integration  
-│   ├── parsers/         # Harmony format handling
-│   └── utils/           # Shared utilities
-├── demos/               # Curated scenarios
-├── scripts/             # Setup & testing
-└── docs/                # Documentation
+│   ├── backend/            # Node.js API server
+│   ├── frontend/           # React interface
+│   ├── models/             # GPT-oss integration  
+│   ├── parsers/            # Harmony format handling
+│   └── utils/              # Shared utilities
+├── docker/                 # Docker configuration
+│   ├── nginx.conf          # Reverse proxy config
+│   ├── supervisord.conf    # Process management
+│   └── start-*.sh          # Service startup scripts
+├── demos/                  # Interactive demo scenarios
+├── scripts/                # Setup & testing tools
+└── docs/                   # Documentation
 ```
 
 ### Development Workflow
-1. **Phase 1**: Core engine (Days 1-14) ✅
-   - GPT-oss integration ✅
-   - Harmony parser ✅  
-   - Basic API ✅
-   - WebSocket foundation ✅
 
-2. **Phase 2**: Visualization (Days 15-28)
-   - React interface
-   - D3.js reasoning flows
-   - Expert activity heatmaps
-   - Real-time controls
+**✅ Phase 1 Complete**: Core Engine (Days 1-14)
+- GPT-oss integration with vLLM & Transformers ✅
+- Harmony format parser with dual channels ✅  
+- Node.js API with WebSocket support ✅
+- Docker containerization ✅
+- Multi-service architecture ✅
 
-3. **Phase 3**: Polish (Days 29-35)  
-   - Performance optimization
-   - Demo scenarios
-   - Video recording
-   - Documentation
+**🔄 Phase 2 In Progress**: Visualization (Days 15-28)
+- React frontend foundation ✅
+- Component architecture ✅
+- D3.js reasoning flow visualization
+- Expert activity heatmaps
+- Real-time control interface
+
+**📋 Phase 3 Planned**: Polish (Days 29-35)  
+- Performance optimization
+- Demo scenario completion
+- Video recording for submission
+- Final documentation & deployment
+
+### Cloud Deployment
+
+**Google Cloud Run**:
+```bash
+# Build and deploy
+gcloud builds submit --tag gcr.io/PROJECT_ID/neural-symphony
+gcloud run deploy --image gcr.io/PROJECT_ID/neural-symphony --gpu 1 --gpu-type nvidia-l4
+```
+
+**Google Compute Engine**:
+```bash
+python deploy-quick.py
+```
 
 ---
 
