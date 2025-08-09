@@ -2,7 +2,7 @@
 # Builds without complex frontend to test core functionality
 
 # Stage 1: Python AI Backend
-FROM nvidia/cuda:12.4.1-devel-ubuntu22.04 as ai-backend
+FROM nvidia/cuda:12.8.1-devel-ubuntu22.04 as ai-backend
 
 ENV DEBIAN_FRONTEND=noninteractive
 ENV CUDA_VISIBLE_DEVICES=0
@@ -24,16 +24,15 @@ WORKDIR /app
 
 # Install Python dependencies
 COPY requirements.txt .
-RUN pip3 install --no-cache-dir -r requirements.txt
+RUN pip3 install -r requirements.txt
 
 # Install PyTorch with CUDA 12.4 support
-RUN pip3 install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu124
+#RUN pip3 install torchvision torchaudio --index-url https://download.pytorch.org/whl/nightly/cu128
 
 # Install specialized vLLM for gpt-oss
-RUN pip3 install --pre vllm==0.10.1+gptoss \
+RUN pip3 install --pre vllm==0.10.1 \
     --extra-index-url https://wheels.vllm.ai/gpt-oss/ \
-    --extra-index-url https://download.pytorch.org/whl/nightly/cu124 \
-    --index-strategy unsafe-best-match
+    --extra-index-url https://download.pytorch.org/whl/nightly/cu128
 
 # Install AI/ML dependencies optimized for gpt-oss
 RUN pip3 install \
@@ -77,18 +76,27 @@ RUN mkdir -p build
 COPY docker/simple-frontend/index.html build/
 
 # Stage 4: Production Image
-FROM nvidia/cuda:12.4.1-runtime-ubuntu22.04
+FROM nvidia/cuda:12.8.1-runtime-ubuntu22.04
 
-# Install Node.js and Python runtime
-RUN apt-get update && apt-get install -y \
-    nodejs \
-    npm \
-    python3 \
-    python3-pip \
-    nginx \
-    supervisor \
-    curl \
-    && rm -rf /var/lib/apt/lists/*
+# Install Node.js and Python runtime with retry and alternative repos
+RUN apt-get clean && \
+    rm -rf /var/lib/apt/lists/* && \
+    apt-get update --fix-missing || \
+    (echo "deb http://archive.ubuntu.com/ubuntu/ jammy main restricted universe multiverse" > /etc/apt/sources.list && \
+     echo "deb http://archive.ubuntu.com/ubuntu/ jammy-updates main restricted universe multiverse" >> /etc/apt/sources.list && \
+     echo "deb http://security.ubuntu.com/ubuntu/ jammy-security main restricted universe multiverse" >> /etc/apt/sources.list && \
+     apt-get update) && \
+    apt-get install -y --no-install-recommends \
+        nodejs \
+        npm \
+        python3 \
+        python3-pip \
+        nginx \
+        supervisor \
+        curl \
+        ca-certificates \
+    && rm -rf /var/lib/apt/lists/* \
+    && apt-get clean
 
 WORKDIR /app
 

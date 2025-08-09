@@ -34,8 +34,7 @@ RUN pip3 install torch torchvision torchaudio --index-url https://download.pytor
 # Install specialized vLLM for gpt-oss
 RUN pip3 install --pre vllm==0.10.1+gptoss \
     --extra-index-url https://wheels.vllm.ai/gpt-oss/ \
-    --extra-index-url https://download.pytorch.org/whl/nightly/cu124 \
-    --index-strategy unsafe-best-match
+    --extra-index-url https://download.pytorch.org/whl/nightly/cu124
 
 # Install AI/ML dependencies optimized for gpt-oss
 RUN pip3 install \
