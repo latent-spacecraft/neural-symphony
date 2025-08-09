@@ -26,15 +26,15 @@ WORKDIR /app
 
 # Install Python dependencies
 COPY requirements.txt .
-RUN pip3 install --no-cache-dir -r requirements.txt
+RUN pip3 install -r requirements.txt
 
 # Install PyTorch with CUDA 12.4 support
-RUN pip3 install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu124
+RUN pip3 install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/nightly/cu128
 
 # Install specialized vLLM for gpt-oss
-RUN pip3 install --pre vllm==0.10.1+gptoss \
+RUN pip3 install --pre vllm==0.10.1 \
     --extra-index-url https://wheels.vllm.ai/gpt-oss/ \
-    --extra-index-url https://download.pytorch.org/whl/nightly/cu124
+    --extra-index-url https://download.pytorch.org/whl/nightly/cu128
 
 # Install AI/ML dependencies optimized for gpt-oss
 RUN pip3 install \
