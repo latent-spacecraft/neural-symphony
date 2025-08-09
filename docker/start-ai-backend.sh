@@ -31,12 +31,20 @@ export OMP_NUM_THREADS=4
 
 echo "[AI-BACKEND] Starting FastAPI server on port 8000..."
 
-# Start the AI backend server
+# Start the optimized vLLM server for gpt-oss
+echo "[AI-BACKEND] Starting vLLM server optimized for gpt-oss-20b..."
 cd /app
-python3 scripts/transformers-server.py \
-    --model-path /app/models/gpt-oss-20b \
+
+# Use vLLM for maximum GPU performance with gpt-oss
+vllm serve openai/gpt-oss-20b \
     --host 0.0.0.0 \
     --port 8000 \
-    --max-tokens 2048 \
-    --temperature 0.7 \
-    --device cuda
+    --gpu-memory-utilization 0.95 \
+    --max-model-len 4096 \
+    --tensor-parallel-size 1 \
+    --api-key neural-symphony-key \
+    --served-model-name gpt-oss-20b \
+    --trust-remote-code \
+    --quantization mxfp4 \
+    --enable-chunked-prefill \
+    --max-num-batched-tokens 8192

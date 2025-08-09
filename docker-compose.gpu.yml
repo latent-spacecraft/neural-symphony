@@ -1,0 +1,137 @@
+version: '3.8'
+
+services:
+  # Neural Symphony - GPU Optimized with TensorRT
+  neural-symphony:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: neural-symphony-gpu
+    restart: unless-stopped
+    
+    # GPU access with proper runtime
+    runtime: nvidia
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+    
+    # Environment variables for GPU optimization
+    environment:
+      - NODE_ENV=production
+      - CUDA_VISIBLE_DEVICES=0
+      - HF_HOME=/app/.cache/huggingface
+      - MODEL_PATH=/app/models/gpt-oss-20b
+      - PYTHONPATH=/app
+      - PORT=3001
+      - WS_PORT=3002
+      - AI_BACKEND_PORT=8000
+      - NVIDIA_VISIBLE_DEVICES=all
+      - NVIDIA_DRIVER_CAPABILITIES=compute,utility
+      - PYTORCH_CUDA_ALLOC_CONF=max_split_size_mb:512
+      - VLLM_USE_MODELSCOPE=false
+      - VLLM_WORKER_MULTIPROC_METHOD=spawn
+    
+    # Volume mounts optimized for GPU
+    volumes:
+      - neural_symphony_models:/app/models  # Persistent model storage
+      - neural_symphony_cache:/app/.cache   # HuggingFace cache
+      - neural_symphony_logs:/app/logs      # Application logs
+      - /tmp/.X11-unix:/tmp/.X11-unix:rw    # For debugging
+    
+    # Port mappings
+    ports:
+      - "80:80"          # Nginx frontend
+      - "3001:3001"      # Node.js API  
+      - "3002:3002"      # WebSocket server
+      - "8000:8000"      # vLLM API server
+    
+    # Health check
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3001/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 180s  # Longer startup for model download
+    
+    # Logging
+    logging:
+      driver: json-file
+      options:
+        max-size: "100m"
+        max-file: "5"
+    
+    # Resource limits for GPU workload
+    mem_limit: 32g
+    memswap_limit: 32g
+    shm_size: 8g  # Increased for GPU operations
+
+  # Redis for caching
+  redis:
+    image: redis:7-alpine
+    container_name: neural-symphony-redis
+    restart: unless-stopped
+    command: redis-server --appendonly yes --maxmemory 2gb --maxmemory-policy allkeys-lru
+    volumes:
+      - neural_symphony_redis:/data
+    ports:
+      - "6379:6379"
+    mem_limit: 2g
+
+  # Monitoring
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: neural-symphony-prometheus
+    restart: unless-stopped
+    volumes:
+      - ./docker/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - neural_symphony_prometheus:/prometheus
+    ports:
+      - "9090:9090"
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/etc/prometheus/console_libraries'
+      - '--web.console.templates=/etc/prometheus/consoles'
+      - '--storage.tsdb.retention.time=15d'
+    mem_limit: 1g
+
+  # GPU monitoring
+  nvidia-smi-exporter:
+    image: mindprince/nvidia_gpu_prometheus_exporter:0.1
+    container_name: gpu-exporter
+    restart: unless-stopped
+    runtime: nvidia
+    environment:
+      - NVIDIA_VISIBLE_DEVICES=all
+    ports:
+      - "9445:9445"
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+
+# Named volumes for persistence
+volumes:
+  neural_symphony_models:
+    driver: local
+  neural_symphony_cache:
+    driver: local
+  neural_symphony_logs:
+    driver: local
+  neural_symphony_redis:
+    driver: local
+  neural_symphony_prometheus:
+    driver: local
+
+# Networks
+networks:
+  default:
+    name: neural-symphony-gpu-network
+    driver: bridge

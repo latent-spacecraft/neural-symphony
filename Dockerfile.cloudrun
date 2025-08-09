@@ -1,20 +1,16 @@
-# Neural Symphony - AI Reasoning Orchestrator
-# Multi-stage Docker build for GPU-accelerated deployment
+# Neural Symphony - Cloud Run Compatible Dockerfile
+# CPU-only deployment for Google Cloud Run
 
-# Stage 1: Python AI Backend
-FROM nvidia/cuda:12.4-devel-ubuntu22.04 as ai-backend
+# Stage 1: Python AI Backend (CPU-only)
+FROM python:3.10-slim as ai-backend
 
 # Set environment variables
 ENV DEBIAN_FRONTEND=noninteractive
-ENV CUDA_VISIBLE_DEVICES=0
 ENV PYTHONPATH=/app
 ENV HF_HOME=/app/.cache/huggingface
 
 # Install system dependencies
 RUN apt-get update && apt-get install -y \
-    python3 \
-    python3-pip \
-    python3-dev \
     build-essential \
     git \
     curl \
@@ -24,32 +20,19 @@ RUN apt-get update && apt-get install -y \
 # Create app directory
 WORKDIR /app
 
-# Install Python dependencies
+# Install Python dependencies (CPU versions)
 COPY requirements.txt .
-RUN pip3 install --no-cache-dir -r requirements.txt
-
-# Install PyTorch with CUDA 12.4 support
-RUN pip3 install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu124
-
-# Install specialized vLLM for gpt-oss
-RUN pip3 install --pre vllm==0.10.1+gptoss \
-    --extra-index-url https://wheels.vllm.ai/gpt-oss/ \
-    --extra-index-url https://download.pytorch.org/whl/nightly/cu124 \
-    --index-strategy unsafe-best-match
-
-# Install AI/ML dependencies optimized for gpt-oss
-RUN pip3 install \
+RUN pip3 install --no-cache-dir \
+    torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cpu \
     transformers[torch] \
     accelerate \
-    bitsandbytes \
     huggingface_hub \
     fastapi \
     uvicorn \
     websockets \
     pydantic \
-    kernels \
-    tensorrt \
-    nvidia-tensorrt
+    numpy \
+    scipy
 
 # Copy AI model interface scripts
 COPY scripts/ ./scripts/
@@ -57,7 +40,7 @@ COPY src/models/ ./src/models/
 COPY src/parsers/ ./src/parsers/
 
 # Stage 2: Node.js Backend
-FROM node:18-alpine as backend
+FROM node:18-slim as backend
 
 WORKDIR /app
 
@@ -72,7 +55,7 @@ COPY src/utils/ ./src/utils/
 RUN npm ci --only=production
 
 # Stage 3: React Frontend Build
-FROM node:18-alpine as frontend-build
+FROM node:18-slim as frontend-build
 
 WORKDIR /app
 
@@ -83,18 +66,16 @@ RUN npm ci
 # Copy frontend source
 COPY src/frontend/ ./
 
-# Build frontend
+# Build frontend for production
 RUN npm run build
 
-# Stage 4: Production Image
-FROM nvidia/cuda:12.4-runtime-ubuntu22.04
+# Stage 4: Production Image (Cloud Run compatible)
+FROM python:3.10-slim
 
-# Install Node.js and Python runtime
+# Install Node.js, nginx, and supervisor
 RUN apt-get update && apt-get install -y \
     nodejs \
     npm \
-    python3 \
-    python3-pip \
     nginx \
     supervisor \
     curl \
@@ -104,7 +85,7 @@ RUN apt-get update && apt-get install -y \
 WORKDIR /app
 
 # Copy Python AI backend from stage 1
-COPY --from=ai-backend /usr/local/lib/python3.10/dist-packages /usr/local/lib/python3.10/dist-packages
+COPY --from=ai-backend /usr/local/lib/python3.10/site-packages /usr/local/lib/python3.10/site-packages
 COPY --from=ai-backend /usr/local/bin /usr/local/bin
 COPY --from=ai-backend /app/src /app/src
 COPY --from=ai-backend /app/scripts /app/scripts
@@ -127,17 +108,23 @@ RUN mkdir -p /app/models /app/logs /var/log/supervisor
 COPY docker/nginx.conf /etc/nginx/sites-available/default
 COPY docker/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
-# Copy startup scripts
-COPY docker/start-ai-backend.sh /app/start-ai-backend.sh
+# Copy startup scripts (CPU versions)
+COPY docker/start-ai-backend-cpu.sh /app/start-ai-backend.sh
 COPY docker/start-node-backend.sh /app/start-node-backend.sh
 RUN chmod +x /app/start-*.sh
 
-# Expose ports
-EXPOSE 80 3000 3001 8000
+# Set environment for CPU-only mode
+ENV CUDA_VISIBLE_DEVICES=""
+ENV DEVICE="cpu"
+ENV MODEL_DEVICE="cpu"
+
+# Use Cloud Run port
+ENV PORT=8080
+EXPOSE 8080
 
 # Health check
 HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
-    CMD curl -f http://localhost:3001/api/health || exit 1
+    CMD curl -f http://localhost:8080/health || exit 1
 
 # Start services with supervisor
 CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf"]
